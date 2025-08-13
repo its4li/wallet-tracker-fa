@@ -2,45 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* تم تیره و راست‌به‌چپ */
+:root { color-scheme: dark; }
+
 html, body {
   height: 100%;
+  margin: 0;
+  padding: 0;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: #e2e8f0;
-  font-family: 'Vazirmatn', system-ui, -apple-system, Arial;
+  font-family: 'Vazirmatn', system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
+a { color: #93c5fd; }
+
+/* کامپوننت‌های کمکی */
 .card {
   @apply bg-slate-800/60 border border-slate-700 rounded-xl backdrop-blur-sm shadow-xl;
 }
-
 .btn {
-  @apply px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg;
+  @apply px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow;
 }
-
 .input {
   @apply w-full px-4 py-3 rounded-lg bg-slate-900/70 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
 }
+.table { @apply w-full text-sm; }
+.table th, .table td { @apply px-4 py-3 text-right; }
 
-.table {
-  @apply w-full text-sm;
-}
+.badge { @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium; }
+.badge-success { @apply bg-emerald-500/20 text-emerald-300 border border-emerald-500/30; }
+.badge-error { @apply bg-red-500/20 text-red-300 border border-red-500/30; }
 
-.table th, .table td {
-  @apply px-4 py-3 text-right;
-}
-
-.badge {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
-}
-
-.badge-success { 
-  @apply bg-emerald-500/20 text-emerald-300 border border-emerald-500/30; 
-}
-
-.badge-error { 
-  @apply bg-red-500/20 text-red-300 border border-red-500/30; 
-}
-
-.animate-pulse-slow {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+.animate-pulse-slow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
