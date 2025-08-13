@@ -19,16 +19,13 @@ export default function HomePage() {
     try {
       setLoading(true);
       setError("");
-      
       const res = await fetch(`/api/eth/txs?address=${addr}&page=${p}&pageSize=${pageSize}`, {
         cache: "no-cache"
       });
-      
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.message || "خطا در دریافت اطلاعات");
       }
-      
       const data = await res.json();
       setTxs(data.result || []);
     } catch (e) {
@@ -53,7 +50,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
       <div className="text-center space-y-4">
         <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
           رهگیری تراکنش‌های والت
@@ -63,12 +59,10 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* Search Form */}
       <div className="card p-6 sm:p-8">
         <AddressForm onSearch={handleSearch} loading={loading} />
       </div>
 
-      {/* Results Section */}
       <div className="card p-6 sm:p-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -78,7 +72,7 @@ export default function HomePage() {
           {address && (
             <div className="text-xs sm:text-sm text-slate-400 truncate max-w-[60%]">
               <span className="hidden sm:inline">آدرس: </span>
-              <code className="bg-slate-900 px-2 py-1 rounded text-blue-300">
+              <code className="bg-slate-900 px-2 py-1 rounded text-blue-300" dir="ltr">
                 {address.slice(0, 6)}...{address.slice(-4)}
               </code>
             </div>
@@ -109,11 +103,9 @@ export default function HomePage() {
               >
                 ← صفحه قبل
               </button>
-              
               <span className="text-slate-300 text-sm bg-slate-900 px-3 py-1 rounded-lg">
                 صفحه {new Intl.NumberFormat('fa-IR').format(page)}
               </span>
-              
               <button
                 className="btn"
                 onClick={() => handlePageChange(page + 1)}
@@ -129,7 +121,7 @@ export default function HomePage() {
             <div className="text-slate-400">
               برای شروع، آدرس کیف پول اتریوم خود را وارد کنید
             </div>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-slate-500" dir="ltr">
               نمونه: 0x00000000219ab540356cBB839Cbe05303d7705Fa
             </div>
           </div>
