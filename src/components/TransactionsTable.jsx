@@ -4,28 +4,28 @@ function formatDateFa(timestamp) {
   try {
     return new Intl.DateTimeFormat("fa-IR", {
       year: "numeric",
-      month: "2-digit", 
+      month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
     }).format(new Date(timestamp * 1000));
   } catch {
-    return new Date(timestamp * 1000).toLocaleString('fa-IR');
+    return new Date(timestamp * 1000).toLocaleString("fa-IR");
   }
 }
 
 function formatNumberFa(value, decimals = 6) {
   try {
-    return new Intl.NumberFormat("fa-IR", { 
+    return new Intl.NumberFormat("fa-IR", {
       maximumFractionDigits: decimals,
       minimumFractionDigits: 0
     }).format(value);
   } catch {
-    return value.toString();
+    return value?.toString?.() ?? value;
   }
 }
 
-function shortenAddress(addr, start = 6, end = 4) {
+function shorten(addr, start = 6, end = 4) {
   if (!addr) return "—";
   return `${addr.slice(0, start)}...${addr.slice(-end)}`;
 }
@@ -35,7 +35,6 @@ export default function TransactionsTable({ items }) {
 
   return (
     <div className="space-y-4">
-      {/* Desktop Table */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="table">
           <thead className="text-slate-300 bg-slate-900/50">
@@ -53,15 +52,14 @@ export default function TransactionsTable({ items }) {
             {items.map((tx) => (
               <tr key={tx.hash} className="border-t border-slate-700/50 hover:bg-slate-800/30 transition-colors">
                 <td className="font-medium">{formatDateFa(tx.timeStamp)}</td>
-                <td className="font-mono text-xs">
+                <td className="font-mono text-xs" dir="ltr">
                   <a
                     href={`https://etherscan.io/tx/${tx.hash}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
-                    dir="ltr"
                   >
-                    {shortenAddress(tx.hash, 8, 6)}
+                    {shorten(tx.hash, 8, 6)}
                   </a>
                 </td>
                 <td className="font-mono text-xs" dir="ltr">
@@ -71,7 +69,7 @@ export default function TransactionsTable({ items }) {
                     rel="noreferrer"
                     className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
                   >
-                    {shortenAddress(tx.from)}
+                    {shorten(tx.from)}
                   </a>
                 </td>
                 <td className="font-mono text-xs" dir="ltr">
@@ -82,15 +80,13 @@ export default function TransactionsTable({ items }) {
                       rel="noreferrer"
                       className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
                     >
-                      {shortenAddress(tx.to)}
+                      {shorten(tx.to)}
                     </a>
                   ) : (
                     <span className="text-slate-500">Contract Creation</span>
                   )}
                 </td>
-                <td className="font-medium">
-                  {tx.valueEth > 0 ? formatNumberFa(tx.valueEth) : "0"}
-                </td>
+                <td className="font-medium">{tx.valueEth > 0 ? formatNumberFa(tx.valueEth) : "0"}</td>
                 <td className="text-slate-400">{formatNumberFa(tx.feeEth, 8)}</td>
                 <td>
                   {tx.status === "success" ? (
@@ -105,21 +101,19 @@ export default function TransactionsTable({ items }) {
         </table>
       </div>
 
-      {/* Mobile Cards */}
+      {/* کارت‌های موبایل */}
       <div className="lg:hidden space-y-4">
         {items.map((tx) => (
           <div key={tx.hash} className="card p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-400">
-                {formatDateFa(tx.timeStamp)}
-              </div>
+              <div className="text-sm text-slate-400">{formatDateFa(tx.timeStamp)}</div>
               {tx.status === "success" ? (
                 <span className="badge badge-success">✓ موفق</span>
               ) : (
                 <span className="badge badge-error">✗ ناموفق</span>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <div>
                 <span className="text-xs text-slate-500">هش:</span>
@@ -133,7 +127,7 @@ export default function TransactionsTable({ items }) {
                   {tx.hash}
                 </a>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-slate-500">مقدار:</span>
@@ -143,9 +137,7 @@ export default function TransactionsTable({ items }) {
                 </div>
                 <div>
                   <span className="text-slate-500">کارمزد:</span>
-                  <div className="text-slate-400">
-                    {formatNumberFa(tx.feeEth, 8)} ETH
-                  </div>
+                  <div className="text-slate-400">{formatNumberFa(tx.feeEth, 8)} ETH</div>
                 </div>
               </div>
             </div>
