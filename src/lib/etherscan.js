@@ -15,40 +15,27 @@ export async function fetchEthereumTransactions({ address, page = 1, pageSize = 
       apikey: apiKey,
     };
 
-    const { data } = await axios.get(url, { 
-      params, 
+    const { data } = await axios.get(url, {
+      params,
       timeout: 15000,
-      headers: {
-        'User-Agent': 'wallet-tracker-fa/1.0'
-      }
+      headers: { "User-Agent": "wallet-tracker-fa/1.0" }
     });
 
     if (!data || data.status !== "1" || !Array.isArray(data.result)) {
-      // Handle "No transactions found" case
       if (data?.message === "No transactions found") {
         return { ok: true, result: [] };
       }
-      
-      // Handle rate limiting
       if (data?.result === "Max rate limit reached") {
         return { ok: false, error: "محدودیت نرخ درخواست. لطفاً کمی صبر کنید." };
       }
-      
-      return { 
-        ok: false, 
-        error: data?.result || data?.message || "خطا در دریافت اطلاعات از API" 
-      };
+      return { ok: false, error: data?.result || data?.message || "خطا در دریافت اطلاعات از API" };
     }
 
     return { ok: true, result: data.result };
   } catch (error) {
-    if (error.code === 'ECONNABORTED') {
+    if (error.code === "ECONNABORTED") {
       return { ok: false, error: "زمان انتظار درخواست به پایان رسید" };
     }
-    
-    return { 
-      ok: false, 
-      error: error?.message || "خطا در ارتباط با شبکه" 
-    };
+    return { ok: false, error: error?.message || "خطا در ارتباط با شبکه" };
   }
 }
