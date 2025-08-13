@@ -8,15 +8,10 @@ export async function GET(req) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const pageSize = parseInt(searchParams.get("pageSize") || "25", 10);
 
-    // Validation
     if (!address || !/^0x[a-fA-F0-9]{40}$/.test(address)) {
-      return NextResponse.json(
-        { message: "آدرس والت معتبر نیست." }, 
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "آدرس والت معتبر نیست." }, { status: 400 });
     }
 
-    // Get API key from environment
     const apiKey = process.env.ETHERSCAN_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -25,22 +20,14 @@ export async function GET(req) {
       );
     }
 
-    // Fetch transactions
-    const { ok, result, error } = await fetchEthereumTransactions({ 
-      address, 
-      page, 
-      pageSize, 
-      apiKey 
+    const { ok, result, error } = await fetchEthereumTransactions({
+      address, page, pageSize, apiKey
     });
 
     if (!ok) {
-      return NextResponse.json(
-        { message: error || "خطا در دریافت اطلاعات از شبکه" }, 
-        { status: 502 }
-      );
+      return NextResponse.json({ message: error || "خطا در دریافت اطلاعات از شبکه" }, { status: 502 });
     }
 
-    // Normalize data for frontend
     const normalized = (result || []).map((tx) => {
       const valueEth = Number(tx.value) / 1e18;
       const gasPriceWei = Number(tx.gasPrice || 0);
@@ -66,9 +53,6 @@ export async function GET(req) {
     return NextResponse.json({ result: normalized });
   } catch (e) {
     console.error("API Error:", e);
-    return NextResponse.json(
-      { message: "خطای داخلی سرور" }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "خطای داخلی سرور" }, { status: 500 });
   }
 }
