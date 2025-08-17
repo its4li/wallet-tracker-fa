@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "رهگیر تراکنش‌ها | اتریوم",
-  description: "نمایش تاریخچه تراکنش‌های والت اتریوم به زبان فارسی",
-  keywords: ["اتریوم", "تراکنش", "بلاک چین", "کیف پول", "رهگیری"]
+  title: "رهگیر تراکنش‌ها | چند شبکه‌ای",
+  description: "نمایش تاریخچه تراکنش‌های والت در شبکه‌های اتریوم، BSC، Arbitrum و Optimism",
+  keywords: ["اتریوم", "BSC", "Arbitrum", "Optimism", "تراکنش", "بلاک چین", "کیف پول"]
 };
 
 import "../styles/globals.css";
@@ -24,12 +24,17 @@ export default function RootLayout({ children }) {
                   <span className="text-white font-bold text-sm">رت</span>
                 </div>
                 <h1 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  رهگیر تراکنش‌ها
+                  رهگیر چند شبکه‌ای
                 </h1>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-400">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                شبکه: اتریوم
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                </div>
+                4 شبکه
               </div>
             </div>
           </header>
@@ -38,7 +43,7 @@ export default function RootLayout({ children }) {
           </main>
           <footer className="container py-6 text-center">
             <div className="text-xs text-slate-500 border-t border-slate-800 pt-6">
-              ساخته‌شده با ❤️ • Next.js + Tailwind
+              پشتیبانی از ETH • BSC • ARB • OP • ساخته‌شده با ❤️
             </div>
           </footer>
         </div>
