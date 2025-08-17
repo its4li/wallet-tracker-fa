@@ -30,7 +30,7 @@ function shorten(addr, start = 6, end = 4) {
   return `${addr.slice(0, start)}...${addr.slice(-end)}`;
 }
 
-export default function TransactionsTable({ items }) {
+export default function TransactionsTable({ items, network }) {
   if (!items?.length) return null;
 
   return (
@@ -43,8 +43,8 @@ export default function TransactionsTable({ items }) {
               <th>هش تراکنش</th>
               <th>فرستنده</th>
               <th>گیرنده</th>
-              <th>مقدار (ETH)</th>
-              <th>کارمزد (ETH)</th>
+              <th>مقدار ({network.symbol})</th>
+              <th>کارمزد ({network.symbol})</th>
               <th className="rounded-l-lg">وضعیت</th>
             </tr>
           </thead>
@@ -54,7 +54,7 @@ export default function TransactionsTable({ items }) {
                 <td className="font-medium">{formatDateFa(tx.timeStamp)}</td>
                 <td className="font-mono text-xs" dir="ltr">
                   <a
-                    href={`https://etherscan.io/tx/${tx.hash}`}
+                    href={`${network.explorer}/tx/${tx.hash}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
@@ -64,7 +64,7 @@ export default function TransactionsTable({ items }) {
                 </td>
                 <td className="font-mono text-xs" dir="ltr">
                   <a
-                    href={`https://etherscan.io/address/${tx.from}`}
+                    href={`${network.explorer}/address/${tx.from}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
@@ -75,7 +75,7 @@ export default function TransactionsTable({ items }) {
                 <td className="font-mono text-xs" dir="ltr">
                   {tx.to ? (
                     <a
-                      href={`https://etherscan.io/address/${tx.to}`}
+                      href={`${network.explorer}/address/${tx.to}`}
                       target="_blank"
                       rel="noreferrer"
                       className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
@@ -118,7 +118,7 @@ export default function TransactionsTable({ items }) {
               <div>
                 <span className="text-xs text-slate-500">هش:</span>
                 <a
-                  href={`https://etherscan.io/tx/${tx.hash}`}
+                  href={`${network.explorer}/tx/${tx.hash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="block font-mono text-xs text-blue-400 hover:underline"
@@ -132,12 +132,12 @@ export default function TransactionsTable({ items }) {
                 <div>
                   <span className="text-slate-500">مقدار:</span>
                   <div className="font-medium">
-                    {tx.valueEth > 0 ? `${formatNumberFa(tx.valueEth)} ETH` : "0 ETH"}
+                    {tx.valueEth > 0 ? `${formatNumberFa(tx.valueEth)} ${network.symbol}` : `0 ${network.symbol}`}
                   </div>
                 </div>
                 <div>
                   <span className="text-slate-500">کارمزد:</span>
-                  <div className="text-slate-400">{formatNumberFa(tx.feeEth, 8)} ETH</div>
+                  <div className="text-slate-400">{formatNumberFa(tx.feeEth, 8)} {network.symbol}</div>
                 </div>
               </div>
             </div>
@@ -146,7 +146,7 @@ export default function TransactionsTable({ items }) {
       </div>
 
       <div className="text-xs text-slate-500 text-center bg-slate-900/30 rounded-lg p-3">
-        نمایش {formatNumberFa(items.length)} تراکنش در این صفحه
+        نمایش {formatNumberFa(items.length)} تراکنش در این صفحه • شبکه: {network.name}
       </div>
     </div>
   );
