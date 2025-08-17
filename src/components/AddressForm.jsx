@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { isAddress } from "ethers";
+import { NETWORKS } from "./NetworkSelector";
 
-export default function AddressForm({ onSearch, loading }) {
+export default function AddressForm({ onSearch, loading, selectedNetwork }) {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
+  
+  const currentNetwork = NETWORKS[selectedNetwork];
 
   const submit = (e) => {
     e.preventDefault();
     setError("");
     const trimmed = input.trim();
     if (!isAddress(trimmed)) {
-      setError("آدرس واردشده معتبر نیست. لطفاً آدرس اتریوم صحیح وارد کنید.");
+      setError("آدرس واردشده معتبر نیست. لطفاً آدرس صحیح وارد کنید.");
       return;
     }
     onSearch(trimmed);
@@ -22,7 +25,7 @@ export default function AddressForm({ onSearch, loading }) {
     <form onSubmit={submit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-slate-300 mb-2">
-          آدرس کیف پول (اتریوم)
+          آدرس کیف پول ({currentNetwork.name})
         </label>
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
@@ -57,8 +60,9 @@ export default function AddressForm({ onSearch, loading }) {
         </div>
       )}
       <div className="text-xs text-slate-500 space-y-1">
-        <div>• تنها آدرس‌های اتریوم اصلی (Mainnet) پشتیبانی می‌شود</div>
+        <div>• شبکه انتخابی: {currentNetwork.name}</div>
         <div>• آدرس باید با 0x شروع شده و 42 کاراکتر باشد</div>
+        <div>• برای تغییر شبکه، از بخش بالا استفاده کنید</div>
       </div>
     </form>
   );
