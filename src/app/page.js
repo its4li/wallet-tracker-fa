@@ -1,163 +1,110 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import AddressForm from "../components/AddressForm";
-import TransactionsTable from "../components/TransactionsTable";
-import LoadingSpinner from "../components/LoadingSpinner";
-import NetworkSelector, { NETWORKS } from "../components/NetworkSelector";
+import { useState } from 'react';
+import AddressForm from '@/components/AddressForm';
+import TransactionsTable from '@/components/TransactionsTable';
+import NetworkSelector from '@/components/NetworkSelector';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
-export default function HomePage() {
-  const [selectedNetwork, setSelectedNetwork] = useState('eth');
-  const [address, setAddress] = useState("");
-  const [txs, setTxs] = useState([]);
+const networks = {
+  '1': { name: 'Ethereum', symbol: 'ETH', color: 'blue', explorer: 'https://etherscan.io' },
+  '56': { name: 'BNB Smart Chain', symbol: 'BNB', color: 'yellow', explorer: 'https://bscscan.com' },
+  '42161': { name: 'Arbitrum', symbol: 'ETH', color: 'blue', explorer: 'https://arbiscan.io' },
+  '10': { name: 'Optimism', symbol: 'ETH', color: 'red', explorer: 'https://optimistic.etherscan.io' }
+};
+
+export default function Home() {
+  const [selectedNetwork, setSelectedNetwork] = useState('1');
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [page, setPage] = useState(1);
-  const pageSize = 25;
+  const [error, setError] = useState('');
+  const [currentAddress, setCurrentAddress] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const hasData = useMemo(() => txs && txs.length > 0, [txs]);
-  const currentNetwork = NETWORKS[selectedNetwork];
-
-  const fetchTxs = async (addr, p = 1, network = selectedNetwork) => {
+  const fetchTransactions = async (address, page = 1) => {
+    setLoading(true);
+    setError('');
+    
     try {
-      setLoading(true);
-      setError("");
+      const response = await fetch(`/api/transactions?address=${address}&chainId=${selectedNetwork}&page=${page}`);
+      const data = await response.json();
       
-      const apiUrl = NETWORKS[network].api;
-      const res = await fetch(`${apiUrl}?address=${addr}&page=${p}&pageSize=${pageSize}`, {
-        cache: "no-cache"
-      });
-      
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.message || "خطا در دریافت اطلاعات");
+      if (data.error) {
+        setError(data.error);
+        setTransactions([]);
+      } else {
+        setTransactions(data.result || []);
+        setCurrentAddress(address);
+        setCurrentPage(page);
       }
-      
-      const data = await res.json();
-      setTxs(data.result || []);
-    } catch (e) {
-      setTxs([]);
-      setError(e.message || "خطای ناشناخته رخ داد");
+    } catch (err) {
+      setError('خطا در دریافت اطلاعات');
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSearch = (addr) => {
-    setAddress(addr);
-    setPage(1);
-    fetchTxs(addr, 1, selectedNetwork);
-  };
-
   const handleNetworkChange = (networkId) => {
     setSelectedNetwork(networkId);
-    setTxs([]);
-    setError("");
-    setPage(1);
-    // اگر آدرسی وارد شده، دوباره جستجو کن
-    if (address) {
-      fetchTxs(address, 1, networkId);
+    if (currentAddress) {
+      fetchTransactions(currentAddress, 1);
     }
   };
 
-  const handlePageChange = (nextPage) => {
-    const p = Math.max(1, nextPage);
-    setPage(p);
-    fetchTxs(address, p, selectedNetwork);
+  const handlePageChange = (page) => {
+    if (currentAddress) {
+      fetchTransactions(currentAddress, page);
+    }
   };
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-          رهگیری تراکنش‌های چند شبکه‌ای
-        </h1>
-        <p className="text-slate-400 max-w-2xl mx-auto">
-          تاریخچه کامل تراکنش‌های کیف پول خود را در شبکه‌های مختلف مشاهده کنید
-        </p>
-      </div>
-
-      {/* انتخاب شبکه */}
-      <div className="card p-6 sm:p-8">
-        <NetworkSelector 
-          selectedNetwork={selectedNetwork} 
-          onNetworkChange={handleNetworkChange} 
-        />
-      </div>
-
-      {/* فرم جستجو */}
-      <div className="card p-6 sm:p-8">
-        <AddressForm 
-          onSearch={handleSearch} 
-          loading={loading} 
-          selectedNetwork={selectedNetwork}
-        />
-      </div>
-
-      {/* نتایج */}
-      <div className="card p-6 sm:p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <div className={`w-5 h-5 rounded bg-gradient-to-r ${currentNetwork.color}`}></div>
-            تراکنش‌های {currentNetwork.name}
-          </h2>
-          {address && (
-            <div className="text-xs sm:text-sm text-slate-400 truncate max-w-[60%]">
-              <span className="hidden sm:inline">آدرس: </span>
-              <code className="bg-slate-900 px-2 py-1 rounded text-blue-300" dir="ltr">
-                {address.slice(0, 6)}...{address.slice(-4)}
-              </code>
-            </div>
-          )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-4">
+            🔍 ردیاب تراکنش‌های کریپتو
+          </h1>
+          <p className="text-gray-300 text-lg">
+            تاریخچه تراکنش‌های کیف پول خود را در شبکه‌های مختلف مشاهده کنید
+          </p>
         </div>
 
-        {loading ? (
-          <LoadingSpinner />
-        ) : error ? (
-          <div className="text-center py-12">
-            <div className="text-red-400 mb-2">⚠️ خطا</div>
-            <div className="text-slate-300">{error}</div>
-            <button 
-              onClick={() => address && fetchTxs(address, page, selectedNetwork)}
-              className="btn mt-4"
-            >
-              تلاش مجدد
-            </button>
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-white/20">
+            <NetworkSelector 
+              networks={networks}
+              selectedNetwork={selectedNetwork}
+              onNetworkChange={handleNetworkChange}
+            />
+            
+            <AddressForm 
+              onSubmit={(address) => fetchTransactions(address, 1)}
+              loading={loading}
+            />
           </div>
-        ) : hasData ? (
-          <>
-            <TransactionsTable items={txs} network={currentNetwork} />
-            <div className="mt-6 flex items-center justify-between">
-              <button
-                className="btn"
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page <= 1 || loading}
-              >
-                ← صفحه قبل
-              </button>
-              <span className="text-slate-300 text-sm bg-slate-900 px-3 py-1 rounded-lg">
-                صفحه {new Intl.NumberFormat('fa-IR').format(page)}
-              </span>
-              <button
-                className="btn"
-                onClick={() => handlePageChange(page + 1)}
-                disabled={loading || txs.length < pageSize}
-              >
-                صفحه بعد →
-              </button>
+
+          {loading && (
+            <div className="flex justify-center mb-8">
+              <LoadingSpinner />
             </div>
-          </>
-        ) : (
-          <div className="text-center py-16 space-y-4">
-            <div className="text-6xl">🔍</div>
-            <div className="text-slate-400">
-              برای شروع، آدرس کیف پول خود را در شبکه {currentNetwork.name} وارد کنید
+          )}
+
+          {error && (
+            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-8 text-center">
+              <p className="text-red-200">{error}</p>
             </div>
-            <div className="text-xs text-slate-500" dir="ltr">
-              نمونه: 0x00000000219ab540356cBB839Cbe05303d7705Fa
-            </div>
-          </div>
-        )}
+          )}
+
+          {transactions.length > 0 && (
+            <TransactionsTable 
+              transactions={transactions}
+              network={networks[selectedNetwork]}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
